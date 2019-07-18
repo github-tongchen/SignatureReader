@@ -33,9 +33,23 @@ set Sz=%root_path%\tools\7-Zip\7z.exe
 
 
 ::根据文件后缀名做不同的处理
-if ".apk" equ "%suffix_name%" goto apk_file
-if ".jks" equ "%suffix_name%" goto signature_file
-if ".keystore" equ "%suffix_name%" goto signature_file
+if ".apk" equ "%suffix_name%" (
+	::读apk签名
+	goto apk_file	
+) else (
+	if ".jks" equ "%suffix_name%" (
+		::读签名文件
+		goto signature_file		
+	) else (
+		if ".keystore" equ "%suffix_name%" (
+			::读签名文件
+			goto signature_file	
+		) else (
+			::不支持的文件类型
+			goto unsupport_file
+		)
+	)
+)
 
 
 :apk_file
@@ -55,7 +69,6 @@ echo,
 echo --------- APK签名信息读取完成并保存到output目录下与APK文件同名且以“_apk.txt”结尾的文件中 ---------
 goto open_file
 
-
 :signature_file
 ::设置签名文件信息输出文件的文件名结尾部分
 set sign_output_label=_sign
@@ -66,6 +79,11 @@ set output_file=%output_path%%file_name%%sign_output_label%
 echo,
 echo --------- 签名文件信息读取完成并保存到output目录下与签名文件同名且以“_sign.txt”结尾的文件中 ---------
 goto open_file
+
+:unsupport_file
+echo,
+echo *********************** 文件格式不支持，请确认文件后重试。 ***********************
+goto end
 
 
 :open_file
@@ -78,6 +96,6 @@ goto end
 
 :end
 echo,
-echo --------- 签名信息读取结束 ---------
+echo ********************************** 按任意键退出 **********************************
 echo,
 pause
