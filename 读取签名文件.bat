@@ -1,6 +1,7 @@
 @echo off
 title 读取签名文件信息   Powered by TongChen
-
+::改变颜色
+color 8F
 echo,
 echo ********* 本工具仅支持后缀名为.jks和.keystore的签名文件 和 APK文件 *********
 echo,
