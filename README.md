@@ -1,5 +1,9 @@
 # SignatureReader
-windows平台读取签名信息，支持“.apk”、“.jks” 和 “.keystore” 文件。后续加入了安装APK的脚本。
+windows平台读取签名信息，支持“.apk”、“.jks” 和 “.keystore” 文件。
+
+#### 2019-07-23 添加安装APK的脚本。
+
+#### 2019-07-23 添加截屏并保存到PC脚本。
 
     
 ## 本工具仅支持APK文件和 jks\keystore后缀名的签名文件
