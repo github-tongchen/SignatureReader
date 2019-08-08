@@ -13,10 +13,12 @@ set/p file=请拖放文件到窗口：
 
 for %%i in (%file%) do (
 	::获取文件名
-    set "file_name=%%~ni"
+    set file_name=%%~ni
 	::获取文件后缀名
 	set suffix_name=%%~xi
 )
+::去除文件名中任意位置的空格
+set file_name=%file_name: =%
 ::获取当前目录
 set root_path=%~dp0
 ::设置output文件夹路径

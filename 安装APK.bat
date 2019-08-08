@@ -24,7 +24,7 @@ if ".apk" equ "%suffix_name%" (
 
 :install_apk
 set adb=%~dp0\tools\adb\adb
-%adb% install %file% 
+%adb% install -r %file% 
 goto end
 
 :unsupport_file
