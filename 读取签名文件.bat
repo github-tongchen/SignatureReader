@@ -28,11 +28,11 @@ if not exist %output_path% (
 	md %output_path%
 )
 
-set keytool=%root_path%\tools\keytool.exe
+set keytool=%root_path%tools\keytool.exe
 ::设置notepad++路径
-set notepad=%root_path%\tools\notepad++\notepad++.exe
+set notepad=%root_path%tools\notepad++\notepad++.exe
 ::设置7z的命令行程序路径
-set Sz=%root_path%\tools\7-Zip\7z.exe  
+set Sz=%root_path%tools\7-Zip\7z.exe
 
 
 ::根据文件后缀名做不同的处理
@@ -60,27 +60,31 @@ if ".apk" equ "%suffix_name%" (
 set Exclude_path=%output_path%
 ::CERT.RSA在apk中的完整路径
 set CertRsa_File=META-INF\CERT.RSA
-::提取CERT.RSA文件到指定路径
-%Sz% x %file% -o%Exclude_path% %CertRsa_File% -aoa
+::移除上次解压的.RSA文件
+del /a/f/q %Exclude_path%%CertRsa_File%
+::提取*.RSA文件到指定路径(jks打包的apk的RSA文件名都是CERT.RSA,而keystore文件打包的apk的RSA文件名是变化的)
+%Sz% x %file% -o%Exclude_path% META-INF\*.RSA -aoa
+::重命名读取到的.RSA文件为CERT.RSA
+rename %Exclude_path%META-INF\*.RSA CERT.RSA
 ::设置apk签名信息输出文件的文件名结尾部分
 set apk_sign_output_label=_apk
 ::拼接整个apk签名信息输出文件的完整文件名
-set output_file=%output_path%%file_name%%apk_sign_output_label%
+set output_file=%file_name%%apk_sign_output_label%
 ::读取APK签名信息并输出到指定文件
-%keytool% -printcert -file %Exclude_path%%CertRsa_File% >%output_file%.txt
+%keytool% -printcert -file %Exclude_path%%CertRsa_File% >%output_path%%output_file%.txt
 echo,
-echo ********* APK 签名信息读取完成并保存到 output 目录下对应文件中，文件名为 "APK文件名_apk.txt" *********
+echo ************** APK 签名信息读取完成并保存到 output 目录下，文件名为 "%output_file%.txt" **************
 goto open_file
 
 :signature_file
 ::设置签名文件信息输出文件的文件名结尾部分
 set sign_output_label=_sign
 ::拼接整个apk签名信息输出文件的完整路径
-set output_file=%output_path%%file_name%%sign_output_label%
+set output_file=%file_name%%sign_output_label%
 ::读取签名文件信息并输出到指定文件
-%keytool% -list -v -keystore %file% >%output_file%.txt
+%keytool% -list -v -keystore %file% >%output_path%%output_file%.txt
 echo,
-echo ********** 签名信息读取完成并保存到 output 目录下对应文件中，文件名为 "签名文件名_sign.txt" **********
+echo **************** 签名信息读取完成并保存到 output 目录下，文件名为 "%output_file%.txt" ****************
 goto open_file
 
 :unsupport_file
@@ -91,7 +95,7 @@ goto end
 
 :open_file
 ::打开保存签名信息的文件
-start %notepad% %output_file%.txt
+start %notepad% %output_path%%output_file%.txt
 echo,
 echo ********************************** 已自动打开本次保存签名信息的文件 **********************************
 goto end
