@@ -61,7 +61,9 @@ set Exclude_path=%output_path%
 ::CERT.RSA在apk中的完整路径
 set CertRsa_File=META-INF\CERT.RSA
 ::移除上次解压的.RSA文件
-del /a/f/q %Exclude_path%%CertRsa_File%
+if exist %Exclude_path%%CertRsa_File% (
+	del /a/f/q %Exclude_path%%CertRsa_File%
+)
 ::提取*.RSA文件到指定路径(jks打包的apk的RSA文件名都是CERT.RSA,而keystore文件打包的apk的RSA文件名是变化的)
 %Sz% x %file% -o%Exclude_path% META-INF\*.RSA -aoa
 ::重命名读取到的.RSA文件为CERT.RSA
