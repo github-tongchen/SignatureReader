@@ -40,16 +40,21 @@ if ".apk" equ "%suffix_name%" (
 	::读apk签名
 	goto apk_file	
 ) else (
-	if ".jks" equ "%suffix_name%" (
-		::读签名文件
-		goto signature_file		
+	if ".RSA" equ "%suffix_name%" (
+		::读解压apk后META-INF下的RSA文件
+		goto rsa_file	
 	) else (
-		if ".keystore" equ "%suffix_name%" (
+		if ".jks" equ "%suffix_name%" (
 			::读签名文件
-			goto signature_file	
+			goto signature_file		
 		) else (
-			::不支持的文件类型
-			goto unsupport_file
+			if ".keystore" equ "%suffix_name%" (
+				::读签名文件
+				goto signature_file	
+			) else (
+				::不支持的文件类型
+				goto unsupport_file
+			)
 		)
 	)
 )
@@ -76,6 +81,15 @@ set output_file=%file_name%%apk_sign_output_label%
 %keytool% -printcert -file %Exclude_path%%CertRsa_File% >%output_path%%output_file%.txt
 echo,
 echo ************** APK 签名信息读取完成并保存到 output 目录下，文件名为 "%output_file%.txt" **************
+goto open_file
+
+:rsa_file
+::设置RSA签名信息输出文件的文件名结尾部分
+set rsa_sign_output_label=_rsa
+::拼接整个apk签名信息输出文件的完整文件名
+set output_file=%file_name%%rsa_sign_output_label%
+::读取APK签名信息并输出到指定文件
+%keytool% -printcert -file %file% >%output_path%%output_file%.txt
 goto open_file
 
 :signature_file
